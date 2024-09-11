@@ -1,0 +1,630 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Space ROS ProcGen Environments</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="Procedurally generated environments for Space ROS">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">Overview</li><li class="chapter-item expanded "><a href="overview/envs.html"><strong aria-hidden="true">1.</strong> Environments</a></li><li class="chapter-item expanded "><a href="overview/procgen.html"><strong aria-hidden="true">2.</strong> Procedural Generation</a></li><li class="chapter-item expanded "><a href="overview/spaceros.html"><strong aria-hidden="true">3.</strong> Space ROS</a></li><li class="chapter-item expanded affix "><li class="part-title">Getting Started</li><li class="chapter-item expanded "><a href="getting_started/requirements.html"><strong aria-hidden="true">4.</strong> System Requirements</a></li><li class="chapter-item expanded "><a href="getting_started/installation.html"><strong aria-hidden="true">5.</strong> Installation</a></li><li class="chapter-item expanded affix "><li class="part-title">Instructions</li><li class="chapter-item expanded "><a href="instructions/usage.html"><strong aria-hidden="true">6.</strong> Basic Usage</a></li><li class="chapter-item expanded "><a href="instructions/parallel_envs.html"><strong aria-hidden="true">7.</strong> Parallel Environments</a></li><li class="chapter-item expanded "><a href="instructions/spaceros.html"><strong aria-hidden="true">8.</strong> Space ROS Integration</a></li><li class="chapter-item expanded "><a href="instructions/configuration.html"><strong aria-hidden="true">9.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="instructions/clean_cache.html"><strong aria-hidden="true">10.</strong> Cleaning the Assets Cache</a></li><li class="chapter-item expanded affix "><li class="part-title">Development</li><li class="chapter-item expanded "><a href="development/workflows.html"><strong aria-hidden="true">11.</strong> Development Workflows</a></li><li class="chapter-item expanded "><a href="development/new_envs.html"><strong aria-hidden="true">12.</strong> New Environments</a></li><li class="chapter-item expanded affix "><li class="spacer"></li><li class="chapter-item expanded affix "><a href="misc/attributions.html">Attributions</a></li><li class="chapter-item expanded affix "><a href="misc/troubleshooting.html">Troubleshooting</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Space ROS ProcGen Environments</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/AndrejOrsula/spaceros_demos/tree/procgen_envs/spaceros_procgen_envs" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p>The <code>spaceros_procgen_envs</code> package offers a collection of procedurally generated environments designed to bridge the gap between simulated robotics and the vast unpredictability of space.</p>
+<p><img src="../_images/title.png" alt="" /></p>
+<h2 id="key-features"><a class="header" href="#key-features">Key Features</a></h2>
+<h3 id="on-demand-procedural-generation-with-blender"><a class="header" href="#on-demand-procedural-generation-with-blender">On-Demand Procedural Generation with <a href="https://blender.org">Blender</a></a></h3>
+<p>This package utilizes the open-source Blender to procedurally generate unique 3D assets for each environment. By doing so, it enables Space ROS developers to simulate a wide range of scenarios, thereby enhancing the robustness and generalization capabilities of their algorithms, without the need to hoard terabytes of static datasets.</p>
+<h3 id="highly-parallelized-simulation-with-nvidia-isaac-sim"><a class="header" href="#highly-parallelized-simulation-with-nvidia-isaac-sim">Highly-Parallelized Simulation with <a href="https://developer.nvidia.com/isaac-sim">NVIDIA Isaac Sim</a></a></h3>
+<p>All environments support highly parallel simulation instances, significantly accelerating workflows such as parameter tuning, verification, synthetic data generation, and online learning. The uniqueness of each procedurally generated instance ensures a diverse range of experiences, making it possible to capture edge cases through domain randomization. Furthermore, building on top of <a href="https://isaac-sim.github.io/IsaacLab">Isaac Lab</a> enhances compatibility with a wide array of pre-configured robots and sensors.</p>
+<h3 id="compatibility-with-gymnasium-api"><a class="header" href="#compatibility-with-gymnasium-api">Compatibility with <a href="https://gymnasium.farama.org">Gymnasium API</a></a></h3>
+<p>The package employs a standardized interface through the Gymnasium API, ensuring seamless integration with a broad ecosystem of libraries and tools. This enables developers to leverage popular reinforcement learning and imitation learning algorithms while also simplifying the evaluation and comparison of various solutions across diverse scenarios, giving rise to potential collaborations and benchmarking efforts.</p>
+<h3 id="integration-with-space-ros"><a class="header" href="#integration-with-space-ros">Integration with <a href="https://space.ros.org">Space ROS</a></a></h3>
+<p>The package is interoperable with Space ROS and the broader ROS ecosystem, providing access to a rich set of tools and libraries that accelerate the development and deployment of robotic systems. Its compatibility with ROS tooling ensures easy integration into existing workflows. Additionally, it supports multiple parallel instances via namespaced middleware communication, enabling multi-robot operations.</p>
+<h3 id="agnostic-interfaces"><a class="header" href="#agnostic-interfaces">Agnostic Interfaces</a></h3>
+<p>The package was designed with abstraction layers to ensure flexibility for various space robotics applications. By adjusting or replacing procedural pipelines, a single task definition can be adapted for use across different robots and planetary or orbital environments. Moreover, the procedural asset generation pipeline is decoupled from the core package, allowing for integration with external frameworks or standalone use.</p>
+<h3 id="diverse-demonstrations"><a class="header" href="#diverse-demonstrations">Diverse Demonstrations</a></h3>
+<p>The initial release of the package includes multiple robot-enabled demonstrations in diverse space environments, highlighting the potential of procedural generation and parallel simulation. Additionally, the package features a set of goal-oriented tasks, demonstrating its versatility for developing autonomous decision-making solutions.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="environments"><a class="header" href="#environments">Environments</a></h1>
+<p>This section provides an overview of the environments currently available in the <code>spaceros_procgen_envs</code> package.</p>
+<p>Before using these environments, ensure that you meet the <a href="overview/../getting_started/requirements.html">system requirements</a> and have successfully installed the demo, as outlined in the <a href="overview/../getting_started/installation.html">installation guide</a>. Once installation is complete, refer to the <a href="overview/../getting_started/usages.html">usage instructions</a> to learn how to run the environments.</p>
+<h2 id="demos"><a class="header" href="#demos">Demos</a></h2>
+<h3 id="perseverance"><a class="header" href="#perseverance">Perseverance</a></h3>
+<p><img src="overview/../_images/perseverance.png" alt="" /></p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ros2 run spaceros_procgen_envs teleop.py --demo perseverance
+</code></pre>
+<h3 id="ingenuity"><a class="header" href="#ingenuity">Ingenuity</a></h3>
+<p><img src="overview/../_images/ingenuity.png" alt="" /></p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ros2 run spaceros_procgen_envs teleop.py --demo ingenuity
+</code></pre>
+<h3 id="gateway"><a class="header" href="#gateway">Gateway</a></h3>
+<p><img src="overview/../_images/gateway.png" alt="" /></p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ros2 run spaceros_procgen_envs teleop.py --demo gateway
+</code></pre>
+<h2 id="tasks"><a class="header" href="#tasks">Tasks</a></h2>
+<p>A set of environments that come with an objective for the robot to complete. Each environment instance provides a reward signal that agents must learn to maximize.</p>
+<h3 id="sample-collection-moonmars"><a class="header" href="#sample-collection-moonmars">Sample Collection (Moon/Mars)</a></h3>
+<h4 id="moon"><a class="header" href="#moon">Moon</a></h4>
+<p><img src="overview/../_images/sample_collection_moon.png" alt="" /></p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh -e SPACEROS_DEMO_SCENARIO=moon -e SPACEROS_DEMO_SCENARIO=procedural ros2 run spaceros_procgen_envs teleop.py --demo sample_collection
+</code></pre>
+<h4 id="mars"><a class="header" href="#mars">Mars</a></h4>
+<p><img src="overview/../_images/sample_collection_mars.png" alt="" /></p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh -e SPACEROS_DEMO_SCENARIO=mars -e SPACEROS_DEMO_SCENARIO=dataset ros2 run spaceros_procgen_envs teleop.py --demo sample_collection
+</code></pre>
+<h3 id="peg-in-hole-moonmarsorbit"><a class="header" href="#peg-in-hole-moonmarsorbit">Peg-in-Hole (Moon/Mars/Orbit)</a></h3>
+<p><img src="overview/../_images/peg_in_hole_moon.png" alt="" /></p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ros2 run spaceros_procgen_envs teleop.py --demo peg_in_hole
+</code></pre>
+<h3 id="debris-capture-orbit"><a class="header" href="#debris-capture-orbit">Debris Capture (Orbit)</a></h3>
+<p><img src="overview/../_images/debris_capture.png" alt="" /></p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh -e SPACEROS_DEMO_SCENARIO=dataset ros2 run spaceros_procgen_envs teleop.py --demo debris_capture
+</code></pre>
+<hr />
+<p>Note: All environments have two variants (e.g. <code>perseverance</code> and <code>perseverance_visual</code>) that differ in the enabled sensors. The <code>*_visual</code> variant includes camera sensors that provide visual observations at the cost of increased computational requirements.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="procedural-generation"><a class="header" href="#procedural-generation">Procedural Generation</a></h1>
+<h2 id="motivation"><a class="header" href="#motivation">Motivation</a></h2>
+<p>Procedural generation is a powerful technique for creating diverse and realistic environments without relying on static, disk-consuming datasets. This approach allows for the generation of an infinite number of unique environments, a feature that has been underutilized in the fields of robotics and space exploration. The <code>spaceros_procgen_envs</code> package seeks to address this gap by offering a versatile framework for procedurally generating 3D assets, which can be combined to create complex environments suitable for the development, training, and validation of space robotic systems.</p>
+<h2 id="approach"><a class="header" href="#approach">Approach</a></h2>
+<p>The package utilizes <a href="https://www.blender.org">Blender</a> to procedurally generate both the geometry and materials (PBR textures) of 3D assets.</p>
+<p>Geometry generation is achieved using Blender's <a href="https://docs.blender.org/manual/en/latest/modeling/geometry_nodes/introduction.html">Geometry Nodes</a>, a robust node-based system that allows for the creation, manipulation, and modification of arbitrary geometry and data types. First introduced in Blender 2.92 (2021), Geometry Nodes have evolved significantly, supporting the creation of intricate geometries through a series of interconnected node trees. Each node system can consist of multiple node trees that handle different aspects of the geometry. By applying randomness and variation within these node trees, a wide range of unique assets can be produced simply by adjusting the seed value.</p>
+<p>Blender's <a href="https://docs.blender.org/manual/en/latest/render/shader_nodes/introduction.html">Shader Nodes</a>, which have a longer history, are used to define the appearance of objects through material properties. Like Geometry Nodes, Shader Nodes are also node-based and allow for the creation of complex materials. Blender provides several procedural textures and maps (e.g., Perlin noise, Voronoi, Wave), which can be adjusted and combined to form more sophisticated materials. By integrating randomness into the shader nodes, each procedurally generated asset can have a unique appearance, even with the same underlying geometry.</p>
+<h2 id="workflow"><a class="header" href="#workflow">Workflow</a></h2>
+<p>The package includes a <code>blender/procgen_assets.py</code> script that automates the entire procedural generation process, including node construction, modifier application, seeding, texture baking, and model export. This script is fully standalone and interacts with Blender's Python API (<code>bpy</code>) through its binary executable. Although Blender can be used as a Python module via <a href="https://pypi.org/project/bpy">bpy</a>, it is often linked to a specific Python version and has longer release cycles. The standalone script offers more flexibility, allowing it to be used with any Blender version.</p>
+<p>Node trees can be generated from Python source files provided as input to the script. The <a href="https://extensions.blender.org/add-ons/node-to-python">Node To Python addon</a> simplifies the creation of such source code. This addon enables users to design node trees in Blender's graphical interface and convert them into Python code that can be integrated into the <code>procgen_assets.py</code> script. This method allows users to prototype assets interactively within Blender's GUI and then export them into code.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="space-ros"><a class="header" href="#space-ros">Space ROS</a></h1>
+<h2 id="motivation-1"><a class="header" href="#motivation-1">Motivation</a></h2>
+<p>ROS has become the de facto standard for developing robotic systems across various environments, including outer space, with the advent of Space ROS. The <code>spaceros_procgen_envs</code> package integrates seamlessly with the Space ROS ecosystem, facilitating the exposure of relevant simulation data to ROS nodes. This integration aims to accelerate the iterative development and testing of space robotic systems.</p>
+<h2 id="approach-1"><a class="header" href="#approach-1">Approach</a></h2>
+<p>Isaac Sim’s computational graph is primarily offloaded to the system’s dedicated NVIDIA GPU, which presents challenges in directly exposing all internal states to the ROS middleware without compromising performance. Instead, the package focuses on exposing the inputs and outputs of each registered Gymnasium environment alongside a fixed global mapping configuration to maintain modularity and flexibility within the simulation architecture.</p>
+<h2 id="workflow-1"><a class="header" href="#workflow-1">Workflow</a></h2>
+<p>The <code>spaceros_procgen_envs</code> package provides a <code>run_spaceros.py</code> script that spawns a ROS node to interface with the environments. Subscribers, publishers, and services are dynamically created based on the selected environment and global mapping configuration. When running multiple environment instances in parallel, the script automatically assigns different namespaces to inputs and outputs, preventing conflicts. The script also includes additional functionalities, such as simulation reset capabilities.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="system-requirements"><a class="header" href="#system-requirements">System Requirements</a></h1>
+<div class="warning">
+This demo requires a dedicated NVIDIA GPU with RT Cores (RTX series). Isaac Sim does not support GPUs from other vendors.
+</div>
+<h2 id="hardware-requirements"><a class="header" href="#hardware-requirements">Hardware Requirements</a></h2>
+<p>The hardware requirements for running this simulation are inherited from the <a href="https://docs.omniverse.nvidia.com/isaacsim/latest/installation/requirements.html">Isaac Sim requirements</a>. While it is possible to run the simulation on lower-spec systems than those recommended, performance will be significantly reduced.</p>
+<div class="table-wrapper"><table><thead><tr><th>Component</th><th>Minimum Requirement</th></tr></thead><tbody>
+<tr><td>Architecture</td><td><code>x86_64</code></td></tr>
+<tr><td>CPU</td><td>Anything is "good enough"</td></tr>
+<tr><td>RAM</td><td>16 GB</td></tr>
+<tr><td>GPU</td><td>NVIDIA GPU with RT Cores (RTX series)</td></tr>
+<tr><td>VRAM</td><td>4 GB</td></tr>
+<tr><td>Disk Space</td><td>30 GB</td></tr>
+<tr><td>Network</td><td>12 GB (for pulling Docker images)</td></tr>
+</tbody></table>
+</div>
+<h2 id="software-requirements-docker"><a class="header" href="#software-requirements-docker">Software Requirements (Docker)</a></h2>
+<p>The following software requirements are essential for running the simulation inside a Docker container. Other operating systems or window managers may work, but significant adjustments may be required.</p>
+<div class="table-wrapper"><table><thead><tr><th>Component</th><th>Requirement</th></tr></thead><tbody>
+<tr><td>OS</td><td>Linux-based distribution (e.g., Ubuntu 22.04/24.04)</td></tr>
+<tr><td>Window Manager</td><td>X11</td></tr>
+<tr><td>NVIDIA Driver</td><td>535.183.01 (tested; other versions may work)</td></tr>
+</tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h1 id="installation-docker"><a class="header" href="#installation-docker">Installation (Docker)</a></h1>
+<p>This section provides instructions for running the simulation within a Docker container. Before proceeding, ensure that your system meets the <a href="getting_started/requirements.html">system requirements</a>. If you are using a different operating system, you may need to adjust the following steps accordingly or refer to the official documentation for each step.</p>
+<h2 id="1-install-docker-engine"><a class="header" href="#1-install-docker-engine">1. Install <a href="https://docs.docker.com/engine">Docker Engine</a></a></h2>
+<p>First, install Docker Engine by following the <a href="https://docs.docker.com/engine/install"><strong>official installation instructions</strong></a>. You can use the following commands to install Docker on your system:</p>
+<pre><code class="language-bash">curl -fsSL https://get.docker.com | sh
+sudo systemctl enable --now docker
+
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
+</code></pre>
+<h2 id="2-install-nvidia-container-toolkit"><a class="header" href="#2-install-nvidia-container-toolkit">2. Install <a href="https://github.com/NVIDIA/nvidia-container-toolkit">NVIDIA Container Toolkit</a></a></h2>
+<p>Next, install the NVIDIA Container Toolkit, which is required to enable GPU support for Docker containers. Follow the <a href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html"><strong>official installation guide</strong></a> or use the following commands:</p>
+<pre><code class="language-bash">curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg &amp;&amp; curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+sudo apt-get update
+sudo apt-get install -y nvidia-container-toolkit
+sudo nvidia-ctk runtime configure --runtime=docker
+sudo systemctl restart docker
+</code></pre>
+<h2 id="3-gain-access-to-the-isaac-sim-docker-image"><a class="header" href="#3-gain-access-to-the-isaac-sim-docker-image">3. Gain Access to the <a href="https://catalog.ngc.nvidia.com/orgs/nvidia/containers/isaac-sim">Isaac Sim Docker Image</a></a></h2>
+<p>To run the simulation, you need access to the Isaac Sim Docker image, which requires registration and an API key from NVIDIA GPU Cloud (NGC).</p>
+<h3 id="31-register-and-log-in-to-nvidia-gpu-cloud-ngc"><a class="header" href="#31-register-and-log-in-to-nvidia-gpu-cloud-ngc">3.1 Register and Log In to <a href="https://www.nvidia.com/en-us/gpu-cloud">NVIDIA GPU Cloud (NGC)</a></a></h3>
+<p>Visit the <a href="https://ngc.nvidia.com/signin">NGC portal</a> and register or log in to your account.</p>
+<h3 id="32-generate-your-ngc-api-key"><a class="header" href="#32-generate-your-ngc-api-key">3.2 Generate Your <a href="https://docs.nvidia.com/ngc/gpu-cloud/ngc-user-guide/index.html#ngc-api-keys">NGC API Key</a></a></h3>
+<p>Follow the <a href="https://docs.nvidia.com/ngc/gpu-cloud/ngc-user-guide/index.html#generating-personal-api-key"><strong>official guide</strong></a> to generate your personal NGC API key.</p>
+<h3 id="33-log-in-to-ngc-via-docker"><a class="header" href="#33-log-in-to-ngc-via-docker">3.3 Log In to NGC via Docker</a></h3>
+<p>Once you have your API key, log in to NGC through Docker:</p>
+<pre><code class="language-bash">docker login nvcr.io
+</code></pre>
+<p>When prompted for a username, enter <code>$oauthtoken</code> (exactly as shown):</p>
+<pre><code class="language-bash">Username: $oauthtoken
+</code></pre>
+<p>When prompted for a password, use the API key you just generated:</p>
+<pre><code class="language-bash">Password: &lt;NGC API Key&gt;
+</code></pre>
+<h2 id="4-build-the-docker-image"><a class="header" href="#4-build-the-docker-image">4. Build the Docker Image</a></h2>
+<p>Now, you can build the Docker image for <code>spaceros_procgen_envs</code> by running the provided <code>build.sh</code> script. Note that the build process may take up to 15 minutes, depending on your network speed.</p>
+<pre><code class="language-bash">spaceros_procgen_envs/build.sh
+</code></pre>
+<h2 id="5-verify-the-image-build"><a class="header" href="#5-verify-the-image-build">5. Verify the Image Build</a></h2>
+<p>To ensure that the image was built successfully, run the following command. You should see the <code>openrobotics/spaceros_procgen_envs</code> image listed among recently created Docker images.</p>
+<pre><code class="language-bash">docker images openrobotics/spaceros_procgen_envs
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="basic-usage-docker"><a class="header" href="#basic-usage-docker">Basic Usage (Docker)</a></h1>
+<p>After successfully <a href="instructions/../getting_started/installation.html#4-build-the-docker-image">building the Docker image</a>, you are ready to run the environments provided by this demo. The sections below will guide you through this process using a simple teleoperation demo.</p>
+<p>It is strongly recommended that you always use the provided <code>run.sh</code> script when interacting with <code>spaceros_procgen_envs</code>. This script configures the environment automatically and mounts caching volumes. The source code of the demo is also mounted as a volume, which allows you to make code changes in either the host or the container while retaining them. You can optionally provide a command that will be executed immediately inside the container. If no command is specified, you will be dropped into an interactive shell by default. Throughout this documentation, if you omit the <code>spaceros_procgen_envs/run.sh</code> prefix, it assumes that you are already inside the Docker container.</p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ${OPTIONAL_CMD}
+</code></pre>
+<h2 id="verify-the-functionality-of-isaac-sim"><a class="header" href="#verify-the-functionality-of-isaac-sim">Verify the Functionality of Isaac Sim</a></h2>
+<p>Let's start by verifying that Isaac Sim is functioning correctly:</p>
+<div class="warning">
+The first time Isaac Sim starts, it may take a few minutes to compile shaders. However, subsequent runs will use cached artefacts, which significantly speeds up the startup.
+</div>
+<pre><code class="language-bash"># Single quotes are required for the tilde (~) to expand correctly inside the container.
+spaceros_procgen_envs/run.sh '~/isaac-sim/isaac-sim.sh'
+</code></pre>
+<p>If any issues arise, consult the <a href="instructions/../misc/troubleshooting.html#runtime-errors">Troubleshooting</a> section or the <a href="https://docs.omniverse.nvidia.com/isaacsim">official Isaac Sim documentation</a>, as this issue is likely unrelated to the demo.</p>
+<h2 id="journey-into-the-unknown"><a class="header" href="#journey-into-the-unknown">Journey into the Unknown</a></h2>
+<p>Once Isaac Sim is confirmed to be working, you can begin exploring the demos and tasks included with the environments. Let's start with a simple teleoperation demo:</p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ros2 run spaceros_procgen_envs teleop.py
+</code></pre>
+<p>After a few moments, Isaac Sim should appear. The window will briefly remain inactive as the assets are procedurally generated in the background. The generation time depends on the complexity of the assets and your hardware, particularly the GPU, which will be used to bake PBR textures. However, future runs will use cached assets, as long as the configuration remains unchanged and the cache is not cleared (see the <a href="instructions/clean_cache.html">clean_cache.md</a>).</p>
+<p>Eventually, you will be greeted by the Mars Perseverance Rover on a procedurally generated Martian landscape.</p>
+<p><img src="instructions/../_images/perseverance_ui.png" alt="" /></p>
+<p>At the same time, the terminal will display the following keyboard scheme:</p>
+<pre><code>                  +------------------------------------------------+
+                  |  Keyboard Scheme (focus the Isaac Sim window)  |
+                  +------------------------------------------------+
+                  +------------------------------------------------+
+                  | Reset: [ L ]                                   |
+                  +------------------------------------------------+
+                  | Planar Motion                                  |
+                  |                     [ W ] (+X)                 |
+                  |                       ↑                        |
+                  |                       |                        |
+                  |          (-Y) [ A ] ← + → [ D ] (+Y)           |
+                  |                       |                        |
+                  |                       ↓                        |
+                  |                     [ S ] (-X)                 |
+                  +------------------------------------------------+
+</code></pre>
+<p>While the Isaac Sim window is in focus, you can control the rover using the <code>W</code>, <code>A</code>, <code>S</code>, and <code>D</code> keys for motion. Use your mouse to navigate the camera. If the rover gets stuck, pressing <code>L</code> will reset its position.</p>
+<p>To close the demo, press <code>Ctrl+C</code> in the terminal. This will gracefully shut down the demo, close Isaac Sim, and return you to your host environment.</p>
+<h3 id="increase-the-simulation-fidelity"><a class="header" href="#increase-the-simulation-fidelity">Increase the Simulation Fidelity</a></h3>
+<p>By default, the textures in the environment appear blurry due to the configuration setting the baked texture resolution to 12.5% (<code>default=0.125</code>). This setting allows procedural generation to be faster on low-end hardware. If your hardware is capable, you can increase the resolution by adjusting the <code>detail</code> parameter (see <a href="instructions/configuration.html#environment-configuration">environment configuration</a>):</p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh -e SPACEROS_DEMO_DETAIL=1.0 ros2 run spaceros_procgen_envs teleop.py
+</code></pre>
+<h2 id="exploring-more"><a class="header" href="#exploring-more">Exploring More</a></h2>
+<p>You can explore other demos by using the <code>--demo</code>, <code>--task</code>, or <code>--env</code> arguments (which are interchangeable). A full list of available demos is found in the <a href="instructions/../overview/envs.html">overview</a>, or you can conveniently list them using this command:</p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ros2 run spaceros_procgen_envs list_envs.py
+</code></pre>
+<p>As an example, here is how you can launch a new demo:</p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ros2 run spaceros_procgen_envs teleop.py --demo &lt;DEMO&gt;
+</code></pre>
+<p><img src="instructions/../_images/gateway_ui.png" alt="" /></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="parallel-environments"><a class="header" href="#parallel-environments">Parallel Environments</a></h1>
+<p>Running environments in parallel can be essential for tasks like:</p>
+<ul>
+<li>Testing the scalability of the system.</li>
+<li>Collecting synthetic data.</li>
+<li>Training reinforcement learning agents efficiently by leveraging multiple environments.</li>
+</ul>
+<p><img src="instructions/../_images/parallel_envs.png" alt="" /></p>
+<h2 id="the---num_envs-argument"><a class="header" href="#the---num_envs-argument">The <code>--num_envs</code> Argument</a></h2>
+<p>The <code>teleop.py</code> script accepts an optional <code>--num_envs</code> argument. By default, this is set to <code>1</code>, but you can specify more environments for parallel execution. For example, to run four environments, use the following command:</p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ros2 run spaceros_procgen_envs teleop.py --task sample_collection --num_envs 4
+</code></pre>
+<p>Each environment will generate its own procedural assets, providing unique experiences across different simulations. However, note that the time taken to generate these assets scales linearly with the number of environments. These assets will be cached for future runs unless the cache is cleared (explained later in this document).</p>
+<p>After the environments are initialized, they can be controlled in sync using the same keyboard scheme displayed in the terminal.</p>
+<h2 id="using-random-and-zero-agents"><a class="header" href="#using-random-and-zero-agents">Using Random and Zero Agents</a></h2>
+<p>Instead of manually controlling each environment, there are options to automate the process using agents. This is useful for testing whether environments function as expected.</p>
+<h3 id="random-agents"><a class="header" href="#random-agents">Random Agents</a></h3>
+<p>The <code>agent_random.py</code> script allows environments to act based on random actions sampled from the action space. This is particularly useful for verifying if environments are running as intended without manual control:</p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ros2 run spaceros_procgen_envs agent_random.py --task sample_collection --num_envs 4
+</code></pre>
+<h3 id="zero-agents"><a class="header" href="#zero-agents">Zero Agents</a></h3>
+<p>Alternatively, <code>agent_zero.py</code> executes environments where all actions are zero-valued, mimicking a steady-state system. This can be useful for analyzing the idle behavior of environments:</p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ros2 run spaceros_procgen_envs agent_zero.py --task sample_collection --num_envs 4
+</code></pre>
+<p>Both agent scripts (<code>agent_random.py</code> and <code>agent_zero.py</code>) share the same core arguments as <code>teleop.py</code>, with the primary difference being that they do not require teleoperation interfaces.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="space-ros-integration"><a class="header" href="#space-ros-integration">Space ROS Integration</a></h1>
+<p>After understanding the <a href="instructions/usage.html">basic usage</a> and running <a href="instructions/parallel_envs.html">parallel environments</a>, we now explore how to integrate these environments with Space ROS, enabling control of the robots and data collection over ROS topics.</p>
+<h2 id="single-environment"><a class="header" href="#single-environment">Single Environment</a></h2>
+<p>The <code>run_spaceros.py</code> script is the primary entry point for interfacing with the environments through Space ROS. This script spawns a single ROS node that maps inputs and outputs for the environment and provides miscellaneous functionalities such as resetting the simulation. Here is an example using the Ingenuity demo:</p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ros2 run spaceros_procgen_envs run_spaceros.py --demo ingenuity
+</code></pre>
+<p>Once the environment is initialized, open a new terminal to inspect the available ROS topics. You can either use your ROS setup or join the running Docker container with the <code>join.sh</code> script:</p>
+<pre><code class="language-bash">spaceros_procgen_envs/join.sh
+</code></pre>
+<p>Now, list the available ROS topics:</p>
+<pre><code class="language-bash">ros2 topic list
+# Expected output:
+# /clock
+# /env/info
+# /env/reward
+# /env/terminated
+# /env/truncated
+# /parameter_events
+# /robot/cmd_vel
+# /rosout
+# /tf
+</code></pre>
+<p>To control the robot, publish a <code>Twist</code> message to the <code>/robot/cmd_vel</code> topic:</p>
+<pre><code class="language-bash">ros2 topic pub --once /robot/cmd_vel geometry_msgs/msg/Twist '{linear: {x: 1.0}}'
+</code></pre>
+<p>You can reset the simulation by calling the <code>/sim/reset</code> service:</p>
+<pre><code class="language-bash">ros2 service call /sim/reset std_srvs/srv/Empty
+</code></pre>
+<h2 id="parallel-environments-1"><a class="header" href="#parallel-environments-1">Parallel Environments</a></h2>
+<p>You can run multiple environments in parallel by using the <code>--num_envs</code> argument. Each environment will map to its own ROS namespace. For example, try running the Ingenuity demo with 4 environments:</p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ros2 run spaceros_procgen_envs run_spaceros.py --demo ingenuity --num_envs 4
+</code></pre>
+<p>List the available ROS topics again:</p>
+<pre><code class="language-bash">ros2 topic list
+# Expected output:
+# /clock
+# /env0/reward
+# /env0/robot/cmd_vel
+# /env0/terminated
+# /env0/truncated
+# /env1/reward
+# /env1/robot/cmd_vel
+# /env1/terminated
+# /env1/truncated
+# /env2/reward
+# /env2/robot/cmd_vel
+# /env2/terminated
+# /env2/truncated
+# /env3/reward
+# /env3/robot/cmd_vel
+# /env3/terminated
+# /env3/truncated
+# /envs/info
+# /envs/robot/cmd_vel
+# /parameter_events
+# /rosout
+# /tf
+</code></pre>
+<p>Each environment has its own namespace, allowing individual control. For example:</p>
+<pre><code class="language-bash">ros2 topic pub --once /env0/robot/cmd_vel geometry_msgs/msg/Twist '{linear: {x: -1.0}}'
+ros2 topic pub --once /env1/robot/cmd_vel geometry_msgs/msg/Twist '{linear: {x: 1.0}}'
+ros2 topic pub --once /env2/robot/cmd_vel geometry_msgs/msg/Twist '{linear: {y: -1.0}}'
+ros2 topic pub --once /env3/robot/cmd_vel geometry_msgs/msg/Twist '{linear: {y: 1.0}}'
+</code></pre>
+<h2 id="launch-with-rviz2-and-teleop_twist_keyboard"><a class="header" href="#launch-with-rviz2-and-teleop_twist_keyboard">Launch with <code>rviz2</code> and <code>teleop_twist_keyboard</code></a></h2>
+<p>For convenience, you can launch <code>rviz2</code> alongside <code>run_spaceros.py</code> and <code>teleop_twist_keyboard</code> for visualization and control via keyboard:</p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ros2 launch spaceros_procgen_envs demo.launch.py task:=ingenuity_visual num_envs:=4
+</code></pre>
+<p><img src="instructions/../_images/spaceros_launch.png" alt="" /></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="configuration"><a class="header" href="#configuration">Configuration</a></h1>
+<h2 id="environment-configuration"><a class="header" href="#environment-configuration">Environment Configuration</a></h2>
+<p>The environments in Space ROS can be configured in two ways:</p>
+<ol>
+<li><strong>Modifying the <code>configs/env.yaml</code> file</strong>.</li>
+<li><strong>Using environment variables</strong>.</li>
+</ol>
+<p>The default configuration file (<code>configs/env.yaml</code>) contains various settings that control the seed, scenario, level of detail, and options for assets (robot, object, terrain, vehicle).</p>
+<h3 id="example-envyaml"><a class="header" href="#example-envyaml">Example <code>env.yaml</code>:</a></h3>
+<pre><code class="language-yaml">seed: 42 # SPACEROS_DEMO_SEED [int]
+scenario: moon # SPACEROS_DEMO_SCENARIO [mars, moon, orbit]
+detail: 0.125 # SPACEROS_DEMO_DETAIL [float]
+assets:
+  robot:
+    variant: dataset # SPACEROS_DEMO_ASSETS_ROBOT_VARIANT [dataset]
+  object:
+    variant: procedural # SPACEROS_DEMO_ASSETS_OBJECT_VARIANT [primitive, dataset, procedural]
+  terrain:
+    variant: procedural # SPACEROS_DEMO_ASSETS_TERRAIN_VARIANT [none, primitive, dataset, procedural]
+  vehicle:
+    variant: dataset # SPACEROS_DEMO_ASSETS_VEHICLE_VARIANT [none, dataset]
+</code></pre>
+<h3 id="setting-configuration-via-environment-variables"><a class="header" href="#setting-configuration-via-environment-variables">Setting Configuration via Environment Variables</a></h3>
+<p>To override specific values from the configuration file, environment variables can be passed during execution using the <code>run.sh</code> script. For instance:</p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh -e SPACEROS_DEMO_DETAIL=1.0 -e SPACEROS_DEMO_SCENARIO=mars ros2 run spaceros_procgen_envs ...
+</code></pre>
+<p>This command sets the environment detail level to <code>1.0</code> and the scenario to <code>mars</code>.</p>
+<h2 id="cli-arguments"><a class="header" href="#cli-arguments">CLI Arguments</a></h2>
+<p>The following arguments are common across all entrypoint scripts (<code>teleop.py</code>, <code>agent_random.py</code>, <code>agent_zero.py</code>, <code>run_spaceros.py</code>):</p>
+<ul>
+<li><code>-h</code>, <code>--help</code>: Display the help message and exit.</li>
+<li><code>--task TASK</code>, <code>--demo TASK</code>, <code>--env TASK</code>: Specify the name of the task or environment. You can list available tasks using <code>list_envs.py</code>.</li>
+<li><code>--num_envs NUM_ENVS</code>: Number of parallel environments to simulate.</li>
+<li><code>--disable_ui</code>: Disable the majority of the Isaac Sim UI.</li>
+<li><code>--headless</code>: Force the display to remain off, making the simulation headless.</li>
+<li><code>--device DEVICE</code>: Set the device for simulation (e.g., <code>"cpu"</code>, <code>"cuda"</code>, or <code>"cuda:N"</code> where <code>N</code> is the device ID).</li>
+</ul>
+<h2 id="additional-environment-variables"><a class="header" href="#additional-environment-variables">Additional Environment Variables</a></h2>
+<h3 id="spaceros_demo_skip_registration"><a class="header" href="#spaceros_demo_skip_registration"><code>SPACEROS_DEMO_SKIP_REGISTRATION</code></a></h3>
+<p>By setting this to <code>"true"</code> or <code>1</code>, you can skip registering environments with the Gymnasium registry. This can be useful in specific deployment or testing scenarios.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="cleaning-the-assets-cache"><a class="header" href="#cleaning-the-assets-cache">Cleaning the Assets Cache</a></h1>
+<p>After running several demos or simulations, the procedurally generated assets (such as textures and meshes) can accumulate in the cache. To free up disk space, you can clean this cache:</p>
+<pre><code class="language-bash">spaceros_procgen_envs/run.sh ros2 run spaceros_procgen_envs clean_procgen_cache.py
+</code></pre>
+<p>If you're also using Docker and wish to remove the corresponding image, run:</p>
+<pre><code class="language-bash">docker rmi openrobotics/spaceros_procgen_envs
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="development-workflows"><a class="header" href="#development-workflows">Development Workflows</a></h1>
+<p>The <code>spaceros_procgen_envs</code> package is based around using Docker, which in itself provides an isolated development environments. Using the <code>run.sh</code> script already mounts the source code of the demo into the container, which in itself already makes the Docker setup quqite convenient for development. However, the following workflows are also available.</p>
+<h2 id="dev-containers"><a class="header" href="#dev-containers">Dev Containers</a></h2>
+<p>Dev Containers allow for a fully isolated development environment tailored to specific project needs. This is particularly useful for ensuring all dependencies are installed and consistent across different development machines.</p>
+<ol>
+<li>
+<p><strong>Dev Containers Introduction</strong>:</p>
+<ul>
+<li>The repository includes preconfigured settings for <a href="https://containers.dev">Dev Containers</a>, which are development environments hosted within Docker containers. These containers make it easy to manage dependencies and ensure that the development environment is fully consistent across various setups.</li>
+</ul>
+</li>
+<li>
+<p><strong>Modifying the Dev Container</strong>:</p>
+<ul>
+<li>You can customize the included <code>.devcontainer/devcontainer.json</code> file to suit specific project or development needs. This configuration file controls aspects such as base images, development tools, extensions, and environment variables within the container.</li>
+</ul>
+</li>
+<li>
+<p><strong>Opening the Repository in a Dev Container</strong>:</p>
+<ul>
+<li>To simplify the process of building and opening the repository as a Dev Container in Visual Studio Code (VS Code), an automated script is available. Running the following command will set up the containerized environment and open it in VS Code:</li>
+</ul>
+<pre><code class="language-bash">spaceros_procgen_envs/.devcontainer/open.sh
+</code></pre>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="adding-new-environments"><a class="header" href="#adding-new-environments">Adding New Environments</a></h2>
+<p>To introduce a new environment into the <code>spaceros_procgen_envs</code> package, the process is straightforward and modular. Here’s a step-by-step guide:</p>
+<ol>
+<li>
+<p><strong>Duplicate an Existing Environment</strong>:</p>
+<ul>
+<li>Navigate to the <code>spaceros_procgen_envs/tasks</code> directory, which houses the existing environments.</li>
+<li>Copy one of the existing demo or task folders (e.g., <code>sample_collection</code> or one that resembles your desired task/demo more) and rename it to the name of your new environment.</li>
+</ul>
+</li>
+<li>
+<p><strong>Modify the Environment Configuration</strong>:</p>
+<ul>
+<li>After duplicating, customize your new environment by altering the configuration files and task implementation code within the folder. This may include asset selection, interaction rules, or specific environmental dynamics.</li>
+<li>Any changes can be made to the environment’s configuration, asset generation, or task-specific code depending on the desired functionality and behavior.</li>
+</ul>
+</li>
+<li>
+<p><strong>Automatic Registration</strong>:</p>
+<ul>
+<li>The new environment will be automatically detected by the <code>spaceros_procgen_envs</code> package due to its presence in the <code>tasks</code> directory. The environment will be registered under the directory name you assigned during the duplication process.</li>
+<li>There is no need for manual registration, as the system dynamically loads environments based on the folder structure.</li>
+</ul>
+</li>
+<li>
+<p><strong>Running Your New Environment</strong>:</p>
+<ul>
+<li>To run or test the new environment, you can invoke it using the same commands as existing environments, specifying the name of your new environment (task) in the <code>--task</code> argument.</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="attributions"><a class="header" href="#attributions">Attributions</a></h1>
+<p>All modifications to the listed assets, unless stated otherwise, involve non-destructive transformations, mesh simplification, conversion to the <a href="https://openusd.org">Universal Scene Description (USD)</a> format, rigging, and application of USD APIs for integration purposes.</p>
+<ol>
+<li><strong><a href="https://science.nasa.gov/resource/mars-perseverance-rover-3d-model">Mars Perseverance Rover, 3D Model</a></strong> by NASA.</li>
+<li><strong><a href="https://science.nasa.gov/resource/mars-ingenuity-helicopter-3d-model">Mars Ingenuity Helicopter, 3D Model</a></strong> by NASA.</li>
+<li><strong><a href="https://github.com/nasa/NASA-3D-Resources/blob/8780ccf7afd4e6dcdd9c0bed313354173dcd924f/3D%20Models/Mars%202020%20Sample%20Tube%203D%20print%20files/SAMPLE_TUBE.STL">Mars 2020 Sample Tube, 3D Model</a></strong> by NASA. This mesh was modified to include a cap, and additional materials were added.</li>
+<li><strong><a href="https://nasa3d.arc.nasa.gov/detail/gateway">Gateway Core, 3D Model</a></strong> by NASA. The model was separated into individual assets: Canadarm3 (small and large) and the Gateway Core itself.</li>
+<li><strong><a href="https://nasa3d.arc.nasa.gov/detail/gateway">Low Lunar Orbit, HDR Image</a></strong> by NASA. This image was rotated by 90 degrees to better align with the implemented environment.</li>
+<li><strong><a href="https://skfb.ly/owELz">Lunar Rover from the Movie <em>Moon</em>, 3D Model</a></strong> by Watndit, licensed under <a href="http://creativecommons.org/licenses/by/4.0">Creative Commons Attribution</a>. The original model was heavily remodeled and retextured, with significant parts of the geometry removed. The wheels were replaced with a model from NASA's <a href="https://science.nasa.gov/resource/curiosity-rover-3d-model">Curiosity Rover, 3D Model</a>.</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h1>
+<h2 id="runtime-errors"><a class="header" href="#runtime-errors">Runtime Errors</a></h2>
+<h3 id="driver-incompatibility"><a class="header" href="#driver-incompatibility">Driver Incompatibility</a></h3>
+<p>If you encounter the following error message:</p>
+<pre><code class="language-log">[Error] [carb.graphics-vulkan.plugin] VkResult: ERROR_INCOMPATIBLE_DRIVER
+</code></pre>
+<p>This indicates that your NVIDIA driver is incompatible with Omniverse. To resolve the issue, update your NVIDIA driver according to the <a href="https://docs.omniverse.nvidia.com/isaacsim/latest/installation/requirements.html#isaac-sim-short-driver-requirements">Isaac Sim driver requirements</a>.</p>
+<h2 id="unexpected-behavior"><a class="header" href="#unexpected-behavior">Unexpected Behavior</a></h2>
+<h3 id="teleoperation-stuck"><a class="header" href="#teleoperation-stuck">Teleoperation Stuck</a></h3>
+<p>During teleoperation, if you change your window focus, Omniverse may fail to register a button release, causing the robot to continuously move in one direction. To fix this, press the <code>L</code> key to reset the environment.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>

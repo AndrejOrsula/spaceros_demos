@@ -1,0 +1,273 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Installation - Space ROS ProcGen Environments</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="Procedurally generated environments for Space ROS">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../index.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">Overview</li><li class="chapter-item expanded "><a href="../overview/envs.html"><strong aria-hidden="true">1.</strong> Environments</a></li><li class="chapter-item expanded "><a href="../overview/procgen.html"><strong aria-hidden="true">2.</strong> Procedural Generation</a></li><li class="chapter-item expanded "><a href="../overview/spaceros.html"><strong aria-hidden="true">3.</strong> Space ROS</a></li><li class="chapter-item expanded affix "><li class="part-title">Getting Started</li><li class="chapter-item expanded "><a href="../getting_started/requirements.html"><strong aria-hidden="true">4.</strong> System Requirements</a></li><li class="chapter-item expanded "><a href="../getting_started/installation.html" class="active"><strong aria-hidden="true">5.</strong> Installation</a></li><li class="chapter-item expanded affix "><li class="part-title">Instructions</li><li class="chapter-item expanded "><a href="../instructions/usage.html"><strong aria-hidden="true">6.</strong> Basic Usage</a></li><li class="chapter-item expanded "><a href="../instructions/parallel_envs.html"><strong aria-hidden="true">7.</strong> Parallel Environments</a></li><li class="chapter-item expanded "><a href="../instructions/spaceros.html"><strong aria-hidden="true">8.</strong> Space ROS Integration</a></li><li class="chapter-item expanded "><a href="../instructions/configuration.html"><strong aria-hidden="true">9.</strong> Configuration</a></li><li class="chapter-item expanded "><a href="../instructions/clean_cache.html"><strong aria-hidden="true">10.</strong> Cleaning the Assets Cache</a></li><li class="chapter-item expanded affix "><li class="part-title">Development</li><li class="chapter-item expanded "><a href="../development/workflows.html"><strong aria-hidden="true">11.</strong> Development Workflows</a></li><li class="chapter-item expanded "><a href="../development/new_envs.html"><strong aria-hidden="true">12.</strong> New Environments</a></li><li class="chapter-item expanded affix "><li class="spacer"></li><li class="chapter-item expanded affix "><a href="../misc/attributions.html">Attributions</a></li><li class="chapter-item expanded affix "><a href="../misc/troubleshooting.html">Troubleshooting</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Space ROS ProcGen Environments</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/AndrejOrsula/spaceros_demos/tree/procgen_envs/spaceros_procgen_envs" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="installation-docker"><a class="header" href="#installation-docker">Installation (Docker)</a></h1>
+<p>This section provides instructions for running the simulation within a Docker container. Before proceeding, ensure that your system meets the <a href="requirements.html">system requirements</a>. If you are using a different operating system, you may need to adjust the following steps accordingly or refer to the official documentation for each step.</p>
+<h2 id="1-install-docker-engine"><a class="header" href="#1-install-docker-engine">1. Install <a href="https://docs.docker.com/engine">Docker Engine</a></a></h2>
+<p>First, install Docker Engine by following the <a href="https://docs.docker.com/engine/install"><strong>official installation instructions</strong></a>. You can use the following commands to install Docker on your system:</p>
+<pre><code class="language-bash">curl -fsSL https://get.docker.com | sh
+sudo systemctl enable --now docker
+
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
+</code></pre>
+<h2 id="2-install-nvidia-container-toolkit"><a class="header" href="#2-install-nvidia-container-toolkit">2. Install <a href="https://github.com/NVIDIA/nvidia-container-toolkit">NVIDIA Container Toolkit</a></a></h2>
+<p>Next, install the NVIDIA Container Toolkit, which is required to enable GPU support for Docker containers. Follow the <a href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html"><strong>official installation guide</strong></a> or use the following commands:</p>
+<pre><code class="language-bash">curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg &amp;&amp; curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+sudo apt-get update
+sudo apt-get install -y nvidia-container-toolkit
+sudo nvidia-ctk runtime configure --runtime=docker
+sudo systemctl restart docker
+</code></pre>
+<h2 id="3-gain-access-to-the-isaac-sim-docker-image"><a class="header" href="#3-gain-access-to-the-isaac-sim-docker-image">3. Gain Access to the <a href="https://catalog.ngc.nvidia.com/orgs/nvidia/containers/isaac-sim">Isaac Sim Docker Image</a></a></h2>
+<p>To run the simulation, you need access to the Isaac Sim Docker image, which requires registration and an API key from NVIDIA GPU Cloud (NGC).</p>
+<h3 id="31-register-and-log-in-to-nvidia-gpu-cloud-ngc"><a class="header" href="#31-register-and-log-in-to-nvidia-gpu-cloud-ngc">3.1 Register and Log In to <a href="https://www.nvidia.com/en-us/gpu-cloud">NVIDIA GPU Cloud (NGC)</a></a></h3>
+<p>Visit the <a href="https://ngc.nvidia.com/signin">NGC portal</a> and register or log in to your account.</p>
+<h3 id="32-generate-your-ngc-api-key"><a class="header" href="#32-generate-your-ngc-api-key">3.2 Generate Your <a href="https://docs.nvidia.com/ngc/gpu-cloud/ngc-user-guide/index.html#ngc-api-keys">NGC API Key</a></a></h3>
+<p>Follow the <a href="https://docs.nvidia.com/ngc/gpu-cloud/ngc-user-guide/index.html#generating-personal-api-key"><strong>official guide</strong></a> to generate your personal NGC API key.</p>
+<h3 id="33-log-in-to-ngc-via-docker"><a class="header" href="#33-log-in-to-ngc-via-docker">3.3 Log In to NGC via Docker</a></h3>
+<p>Once you have your API key, log in to NGC through Docker:</p>
+<pre><code class="language-bash">docker login nvcr.io
+</code></pre>
+<p>When prompted for a username, enter <code>$oauthtoken</code> (exactly as shown):</p>
+<pre><code class="language-bash">Username: $oauthtoken
+</code></pre>
+<p>When prompted for a password, use the API key you just generated:</p>
+<pre><code class="language-bash">Password: &lt;NGC API Key&gt;
+</code></pre>
+<h2 id="4-build-the-docker-image"><a class="header" href="#4-build-the-docker-image">4. Build the Docker Image</a></h2>
+<p>Now, you can build the Docker image for <code>spaceros_procgen_envs</code> by running the provided <code>build.sh</code> script. Note that the build process may take up to 15 minutes, depending on your network speed.</p>
+<pre><code class="language-bash">spaceros_procgen_envs/build.sh
+</code></pre>
+<h2 id="5-verify-the-image-build"><a class="header" href="#5-verify-the-image-build">5. Verify the Image Build</a></h2>
+<p>To ensure that the image was built successfully, run the following command. You should see the <code>openrobotics/spaceros_procgen_envs</code> image listed among recently created Docker images.</p>
+<pre><code class="language-bash">docker images openrobotics/spaceros_procgen_envs
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../getting_started/requirements.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="../instructions/usage.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../getting_started/requirements.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="../instructions/usage.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
+
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>
